@@ -1,175 +1,178 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
-/**
- * Required images in public directory:
- * - /public/apartment-hero.jpg (recommended size: 1200x800px)
- * - /public/community.jpg (recommended size: 1000x600px)
- */
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="min-h-screen">
+    <main className="px-6 md:px-12 py-10 space-y-20 bg-gray-50 scroll-smooth">
       {/* Hero Section */}
-      <section className="pt-20 bg-gradient-to-b from-blue-50 to-white">
-        <div className="container mx-auto px-4 py-16">
-          <div className="flex flex-col lg:flex-row items-center">
-            <div className="lg:w-1/2 lg:pr-12">
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Welcome to Apna Complex
-              </h1>
-              <p className="text-lg text-gray-600 mb-8">
-                Your complete solution for modern apartment living. Manage your residential experience with ease and efficiency.
-              </p>
-              <div className="flex gap-4">
-                <Link 
-                  href="/register" 
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300"
-                >
-                  Get Started
-                </Link>
-                <Link 
-                  href="/about" 
-                  className="bg-white text-blue-600 border border-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition duration-300"
-                >
-                  Learn More
-                </Link>
-              </div>
-            </div>
-            <div className="lg:w-1/2 mt-12 lg:mt-0">
-              <div className="bg-gray-200 rounded-lg shadow-xl aspect-[3/2] relative overflow-hidden">
-                <Image
-                  src="/apartment-hero.jpg"
-                  alt="Modern Apartment Complex"
-                  fill
-                  className="object-cover"
-                  priority
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
-              </div>
-            </div>
+      <section className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 relative">
+        {/* Image with text overlay */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="relative w-full md:w-1/2 h-96"
+        >
+          <Image
+            src="https://res.cloudinary.com/dayrre5om/image/upload/v1748156504/b4ee1d95-a7c1-42e9-9386-cd583f2b1813.png"
+            alt="Society"
+            fill
+            className="object-cover rounded-lg shadow-lg"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-6 rounded-lg">
+            <h1 className="text-white text-3xl md:text-4xl font-bold text-center leading-snug">
+              Giant leap towards a <span className="text-red-500">SMART</span>{" "}
+              society.
+            </h1>
           </div>
-        </div>
+        </motion.div>
+
+        {/* Description and CTA */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.2 }}
+          className="text-center md:text-left space-y-6 md:w-1/2"
+        >
+          <p className="text-lg text-gray-700">
+            Our all-in-one solution empowers societies to streamline their
+            management, making it effortless and efficient. From simplified
+            accounting and billing to enhanced communication and transparency,
+            we offer the tools you need to create harmonious living
+            environments.
+          </p>
+          <div className="flex justify-center md:justify-start gap-4">
+            <Link
+              href="/register"
+              className="bg-red-600 text-white px-6 py-3 rounded-full hover:bg-red-700 transition"
+            >
+              Free* Subscription
+            </Link>
+            <a
+              href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID"
+              className="border border-blue-600 text-blue-600 px-6 py-3 rounded-full hover:bg-blue-50 transition"
+            >
+              Watch Intro
+            </a>
+          </div>
+        </motion.div>
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <div className="bg-blue-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Maintenance Requests</h3>
-              <p className="text-gray-600">Easy submission and tracking of maintenance requests for quick resolution.</p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <div className="bg-blue-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Notice Board</h3>
-              <p className="text-gray-600">Stay updated with community announcements and important notifications.</p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <div className="bg-blue-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Visitor Management</h3>
-              <p className="text-gray-600">Efficient visitor tracking and security management system.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Access Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Quick Access</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Link href="/maintenance" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-              <h3 className="text-lg font-semibold mb-2">Maintenance</h3>
-              <p className="text-gray-600">Submit and track maintenance requests</p>
-            </Link>
-
-            <Link href="/notice-board" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-              <h3 className="text-lg font-semibold mb-2">Notice Board</h3>
-              <p className="text-gray-600">View community announcements</p>
-            </Link>
-
-            <Link href="/payments" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-              <h3 className="text-lg font-semibold mb-2">Payments</h3>
-              <p className="text-gray-600">Manage maintenance payments</p>
-            </Link>
-
-            <Link href="/contact" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-              <h3 className="text-lg font-semibold mb-2">Help Desk</h3>
-              <p className="text-gray-600">Get support and assistance</p>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Community Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="lg:w-1/2">
-              <h2 className="text-3xl font-bold mb-6">Join Our Community</h2>
-              <p className="text-gray-600 mb-8">
-                Be part of a thriving community where residents come together to create a better living environment. Participate in community events, share your feedback, and help make our complex a better place to live.
-              </p>
-              <Link 
-                href="/register" 
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 inline-block"
-              >
-                Join Now
-              </Link>
-            </div>
-            <div className="lg:w-1/2">
-              <div className="bg-gray-200 rounded-lg shadow-xl aspect-[5/3] relative overflow-hidden">
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        transition={{ staggerChildren: 0.1 }}
+        className="max-w-7xl mx-auto"
+      >
+        <h2 className="text-center text-3xl font-semibold text-blue-800 mb-10">
+          Experience community management at its best
+        </h2>
+        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+          {[
+            {
+              title: "Maintenance Bills",
+              img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748016525/WhatsApp_Image_2025-05-23_at_21.36.48_7698f839_k5pcas.jpg",
+              desc: "Generate maintenance bills within seconds for any billing frequency and send to members via SMS/Email.",
+            },
+            {
+              title: "End-to-End Accounting",
+              img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748016715/WhatsApp_Image_2025-05-23_at_21.40.22_368915a7_uhkm97.jpg",
+              desc: "From billing to expenses, year-end transactions, audit statements, you get complete control.",
+            },
+            {
+              title: "Visitor Management",
+              img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748017704/WhatsApp_Image_2025-05-23_at_21.45.24_159de20f_uei3wx.jpg",
+              desc: "Secure your premises by verifying every visitor directly with residents seamlessly.",
+            },
+            {
+              title: "Complaint Tracking",
+              img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748092865/42352cec-7291-4c5b-a420-e16d62eca3b3.png",
+              desc: "Log and resolve resident complaints quickly and efficiently with full transparency.",
+            },
+            {
+              title: "Facility Booking",
+              img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748093061/44d10ad6-5123-4ab5-a31e-b39ab914ebdf.png",
+              desc: "Let residents book community facilities online with real-time availability.",
+            },
+            {
+              title: "Polls and Voting",
+              img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748017724/WhatsApp_Image_2025-05-23_at_21.56.25_0c8423d6_vxpofd.jpg",
+              desc: "Run community polls and voting for important decisions with security and ease.",
+            },
+            {
+              title: "Emergency Alerts",
+              img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748017717/WhatsApp_Image_2025-05-23_at_21.52.25_2e8d5959_mua127.jpg",
+              desc: "Send urgent alerts and messages to all residents instantly in times of need.",
+            },
+            {
+              title: "Financial Reports",
+              img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748016715/WhatsApp_Image_2025-05-23_at_21.40.22_368915a7_uhkm97.jpg",
+              desc: "Generate detailed financial reports to track society finances and budgets effortlessly.",
+            },
+            {
+              title: "Admin Dashboard",
+              img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748093218/1f0df4b4-dd0e-4d2e-9130-2559609355c1.png",
+              desc: "Admin-only login and panel for managing society operations with access control.",
+            },
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="bg-white border p-6 rounded-xl shadow-md hover:shadow-xl transition duration-300 hover:border-blue-300"
+            >
+              <div className="w-full h-40 relative mb-4">
                 <Image
-                  src="/community.jpg"
-                  alt="Community"
+                  src={feature.img}
+                  alt={feature.title}
                   fill
-                  className="object-cover"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
+                  className="object-contain rounded-md"
                 />
               </div>
-            </div>
-          </div>
+              <h3 className="font-bold text-lg text-center text-blue-900 mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-sm text-center text-gray-600">
+                {feature.desc}
+              </p>
+            </motion.div>
+          ))}
         </div>
-      </section>
+      </motion.section>
 
-      {/* Contact CTA Section */}
-      <section className="py-16 bg-blue-600">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">Need Assistance?</h2>
-          <p className="text-white text-lg mb-8">
-            Our support team is here to help you with any questions or concerns.
-          </p>
-          <Link 
-            href="/contact" 
-            className="bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-gray-100 transition duration-300 inline-block"
+      {/* Call-to-Action Section */}
+      <motion.section
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+        className="text-center max-w-4xl mx-auto space-y-6"
+      >
+        <h2 className="text-3xl font-bold text-blue-900">
+          Go live in less than 48 hours!
+        </h2>
+        <p className="text-lg text-gray-700">
+          Experience the first support-free application post onboarding. Our
+          simplified user interface helps you get started in just a matter of
+          hours.
+        </p>
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <Link
+            href="/admin"
+            className="bg-red-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition"
           >
-            Contact Us
+            Admin Login
           </Link>
         </div>
-      </section>
-    </div>
+      </motion.section>
+    </main>
   );
 }
