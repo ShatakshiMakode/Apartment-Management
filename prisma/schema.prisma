@@ -1,0 +1,287 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+ // output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider       = "postgresql"
+  url            = env("DATABASE_URL")
+  directUrl      = env("DIRECT_URL")
+}
+
+
+enum Role {
+  ADMIN
+  SOCIETY_SECRETARY
+  STAFF
+  TECHNICIAN
+  WATCHMAN
+  HOUSE_OWNER
+  SOCIETY_MEMBER
+  VISITOR // ✅ Make sure this value exists!
+}
+
+
+enum ComplaintStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+enum RSVPStatus {
+  GOING
+  NOT_GOING
+  MAYBE
+}
+
+model User {
+  id             String   @id @default(cuid())
+  clerkUserId    String   @unique
+  name           String? // ✅ Now optional
+  firstName      String?  // ✅ Now optional
+  lastName       String?  // ✅ Now optional
+  email          String   @unique
+  phoneNumber    String?  // ✅ Already optional
+  role           Role?    @default(VISITOR) // ✅ Optional with default
+  profilePicture String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  societyId      String?
+  society        Society? @relation(fields: [societyId], references: [id])
+
+  buildingId     String?
+  building       Building? @relation(fields: [buildingId], references: [id])
+
+  // ✅ Flat relations
+  flatsOwned     Flat[]   @relation("FlatOwner")
+  flatsResiding  Flat[]   @relation("FlatResident")
+
+  // ✅ Other relations
+  complaints     Complaint[]
+  bookings       Booking[]
+  rsvps          RSVP[]
+  polls          Poll[]
+  visitors       Visitor[] @relation("PreApprovedBy")
+  events         Event[]
+  emergencyCalls EmergencyContact[]
+  documents      Document[]
+  notices        Notice[] @relation("UserNotices")
+
+  @@map("users")
+}
+
+
+
+model Society {
+  id                 String     @id @default(cuid())
+  name               String
+  address            String
+  registrationNumber String
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  buildings          Building[]
+  users              User[]
+
+  @@map("societies")
+}
+
+model Building {
+  id             String     @id @default(cuid())
+  name           String
+  numberOfFloors Int
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  societyId      String
+  society        Society    @relation(fields: [societyId], references: [id])
+  flats          Flat[]
+  users          User[]
+
+  @@map("buildings")
+}
+
+model Flat {
+  id           String   @id @default(cuid())
+  flatNumber   String
+  areaSqFt     Int
+  bedrooms     Int
+  isOccupied   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  buildingId   String
+  building     Building @relation(fields: [buildingId], references: [id])
+  ownerId      String?
+  owner        User?    @relation("FlatOwner", fields: [ownerId], references: [id])
+  residentId   String?
+  resident     User?    @relation("FlatResident", fields: [residentId], references: [id])
+  visitors     Visitor[]
+
+  @@map("flats")
+}
+
+model Visitor {
+  id                  String   @id @default(cuid())
+  name                String
+  phoneNumber         String
+  vehicleNumber       String?
+  purpose             String
+  checkInTime         DateTime?
+  checkOutTime        DateTime?
+  status              String
+  gatePassId          String?
+  securityCheckNotes  String?
+  imageUrl            String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  visitingFlatId      String
+  visitingFlat        Flat     @relation(fields: [visitingFlatId], references: [id])
+
+  preApprovedByUserId String
+  preApprovedBy       User     @relation("PreApprovedBy", fields: [preApprovedByUserId], references: [id])
+
+  @@map("visitors")
+}
+
+model Complaint {
+  id          String          @id @default(cuid())
+  title       String
+  description String
+  status      ComplaintStatus @default(OPEN)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  userId      String
+  user        User            @relation(fields: [userId], references: [id])
+
+  @@map("complaints")
+}
+
+model Facility {
+  id        String   @id @default(cuid())
+  name      String
+  location  String
+  capacity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings  Booking[]
+
+  @@map("facilities")
+}
+
+model Booking {
+  id         String   @id @default(cuid())
+  facilityId String
+  facility   Facility @relation(fields: [facilityId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  startTime  DateTime
+  endTime    DateTime
+  status     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("bookings")
+}
+
+model Notice {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  postedAt  DateTime @default(now())
+  postedBy  String
+  user      User     @relation("UserNotices", fields: [postedBy], references: [id])
+
+  @@map("notices")
+}
+
+model EmergencyContact {
+  id          String   @id @default(cuid())
+  name        String
+  number      String
+  description String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("emergency_contacts")
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  amount      Float
+  description String
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("expenses")
+}
+
+model Vendor {
+  id        String   @id @default(cuid())
+  name      String
+  service   String
+  contact   String
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("vendors")
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  title     String
+  fileUrl   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  uploadedAt DateTime @default(now())
+
+  @@map("documents")
+}
+
+model Poll {
+  id        String   @id @default(cuid())
+  question  String
+  options   String[]
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("polls")
+}
+
+model RSVP {
+  id        String     @id @default(cuid())
+  eventId   String
+  userId    String
+  response  RSVPStatus
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id])
+  event     Event      @relation(fields: [eventId], references: [id])
+
+  @@map("rsvps")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  rsvps       RSVP[]
+
+  @@map("events")
+}
