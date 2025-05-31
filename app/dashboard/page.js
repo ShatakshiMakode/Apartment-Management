@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import clsx from "clsx";
+import Link from "next/link"; // import Link from next/link
 
 const sampleNotices = [
   "Water supply will be off from 2 PM to 5 PM.",
@@ -35,48 +35,126 @@ export default function Dashboard() {
         <marquee behavior="scroll" direction="left" scrollamount="5">
           {sampleNotices[index]}
         </marquee>
-          </div>
+      </div>
 
       {/* Sections based on Roles */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Facility Booking (not for watchmen) */}
         {role !== "watchman" && (
-          <Section
-            title="Facility Booking"
-            description="Book the community hall or gym."
-          />
+          <Link href="../Facilities" passHref legacyBehavior>
+            <a>
+              <Section
+                title="Facility Booking"
+                description="Book the community hall or gym."
+              />
+            </a>
+          </Link>
         )}
 
         {/* Visitor Management (only for watchman, secretary, admin) */}
         {(role === "watchman" || role === "secretary" || role === "admin") && (
-          <Section
-            title="Visitor Management"
-            description="Log visitor entries and update counts."
-          />
+          <Link href="../visitors" passHref legacyBehavior>
+            <a>
+              <Section
+                title="Visitor Management"
+                description="Log visitor entries and update counts."
+              />
+            </a>
+          </Link>
         )}
 
         {/* Payment Reports (secretary, admin only) */}
         {(role === "secretary" || role === "admin") && (
-          <Section
-            title="Payment Reports"
-            description="View & export payment data."
-          />
+          <Link href="../billing" passHref legacyBehavior>
+            <a>
+              <Section
+                title="Payment Reports"
+                description="View & export payment data."
+              />
+            </a>
+          </Link>
         )}
 
         {/* Noticeboard Management (secretary, admin only) */}
         {(role === "secretary" || role === "admin") && (
-          <Section
-            title="Noticeboard Management"
-            description="Post and manage notices for residents."
-          />
+          <Link href="../notice-board" passHref legacyBehavior>
+            <a>
+              <Section
+                title="Noticeboard Management"
+                description="Post and manage notices for residents."
+              />
+            </a>
+          </Link>
         )}
 
         {/* Role Management (admin only) */}
         {role === "admin" && (
-          <Section
-            title="Role & Society Management"
-            description="Assign and manage roles across societies."
-          />
+          <Link href="/role-management" passHref legacyBehavior>
+            <a>
+              <Section
+                title="Role & Society Management"
+                description="Assign and manage roles across societies."
+              />
+            </a>
+          </Link>
+        )}
+
+        {/* Accounting Section (not for watchman) */}
+        {role !== "watchman" && (
+          <Link href="../Accounting" passHref legacyBehavior>
+            <a>
+              <Section
+                title="End-to-End Accounting"
+                description="Track income & expenses, manage financials."
+              />
+            </a>
+          </Link>
+        )}
+
+        {/* Alerts Section (not for watchman) */}
+        {role !== "watchman" && (
+          <Link href="../Alerts" passHref legacyBehavior>
+            <a>
+              <Section
+                title="Emergency Alerts"
+                description="Broadcast urgent notifications to residents."
+              />
+            </a>
+          </Link>
+        )}
+
+        {/* Features Section (visible to all) */}
+        <Link href="../Features" passHref legacyBehavior>
+          <a>
+            <Section
+              title="Features"
+              description="Explore all tools and features AppSociety offers."
+            />
+          </a>
+        </Link>
+
+        {/* Reports Section (secretary and admin only) */}
+        {(role === "secretary" || role === "admin") && (
+          <Link href="../Reports" passHref legacyBehavior>
+            <a>
+              <Section
+                title="Financial Reports"
+                description="Generate and view financial statements."
+              />
+            </a>
+          </Link>
+        )}
+
+        {/* Polls Section (not for watchman) */}
+        {role !== "watchman" && (
+          <Link href="../Polls" passHref legacyBehavior>
+            <a>
+              <Section
+                title="Polls & Voting"
+                description="Create and manage community polls."
+              />
+            </a>
+          </Link>
         )}
       </div>
     </div>
@@ -85,8 +163,10 @@ export default function Dashboard() {
 
 function Section(props) {
   return (
-    <div className="p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all">
-      <h2 className="text-xl font-semibold mb-2 text-blue-800">{props.title}</h2>
+    <div className="p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer">
+      <h2 className="text-xl font-semibold mb-2 text-blue-800">
+        {props.title}
+      </h2>
       <p className="text-gray-600">{props.description}</p>
     </div>
   );

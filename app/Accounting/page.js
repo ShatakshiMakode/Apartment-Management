@@ -6,7 +6,7 @@ export default function AccountingPage() {
         Track income & expenses, reconcile bank statements, and export audit-
         ready financials—all in one place.
       </p>
-      <a href="/" className="text-blue-600 underline hover:text-blue-800">
+      <a href="/dashboard" className="text-blue-600 underline hover:text-blue-800">
         ← Back to Dashboard
       </a>
     </div>

@@ -6,7 +6,7 @@ export default function VisitorPage() {
         Verify every visitor in real time and keep a secure digital log of
         entries, exits, and deliveries.
       </p>
-      <a href="/" className="text-blue-600 underline hover:text-blue-800">
+      <a href="/dashboard" className="text-blue-600 underline hover:text-blue-800">
         ← Back to Dashboard
       </a>
     </div>

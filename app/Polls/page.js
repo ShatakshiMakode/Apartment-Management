@@ -6,7 +6,7 @@ export default function PollsPage() {
         Create secure polls and record votes for community decisions with
         automated results.
       </p>
-      <a href="/" className="text-blue-600 underline hover:text-blue-800">
+      <a href="/dashboard" className="text-blue-600 underline hover:text-blue-800">
         ← Back to Dashboard
       </a>
     </div>

@@ -6,7 +6,7 @@ export default function BillingPage() {
         Generate and send maintenance bills in seconds. Configure billing
         cycles, late-payment rules, and seamless reminders.
       </p>
-      <a href="/" className="text-blue-600 underline hover:text-blue-800">
+      <a href="/dashboard" className="text-blue-600 underline hover:text-blue-800">
         ← Back to Dashboard
       </a>
     </div>

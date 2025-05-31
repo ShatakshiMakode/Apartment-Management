@@ -6,7 +6,7 @@ export default function ReportsPage() {
         Generate income statements, balance sheets, and custom reports to keep
         your society’s finances crystal-clear.
       </p>
-      <a href="/" className="text-blue-600 underline hover:text-blue-800">
+      <a href="/dashboard" className="text-blue-600 underline hover:text-blue-800">
         ← Back to Dashboard
       </a>
     </div>

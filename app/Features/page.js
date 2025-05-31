@@ -6,7 +6,7 @@ export default function AllFeaturesPage() {
         Dive deeper into every tool AppSociety offers. New modules are added
         regularly—stay tuned!
       </p>
-      <a href="/" className="text-blue-600 underline hover:text-blue-800">
+      <a href="/dashboard" className="text-blue-600 underline hover:text-blue-800">
         ← Back to Dashboard
       </a>
     </div>

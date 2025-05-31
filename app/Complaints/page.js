@@ -6,7 +6,7 @@ export default function ComplaintsPage() {
         Log, assign, and resolve resident complaints transparently with
         real-time status updates.
       </p>
-      <a href="/" className="text-blue-600 underline hover:text-blue-800">
+      <a href="/dashboard" className="text-blue-600 underline hover:text-blue-800">
         ← Back to Dashboard
       </a>
     </div>

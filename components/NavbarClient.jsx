@@ -23,22 +23,26 @@ export default function NavbarClient() {
 
   useEffect(() => {
     if (isSignedIn) {
-      fetch("/api/me")
+      fetch("/api/users")
         .then((res) => res.json())
-        .then((data) => setDbUser(data.user))
+        .then((data) => {
+          setDbUser(data.data); // Ensure data.data
+        })
         .catch((err) => console.error("Failed to fetch user:", err));
     }
   }, [isSignedIn]);
+  
+  
 
   const renderDashboardLink = () => {
-    if (!dbUser) return null;
+    if (!dbUser?.role) return null;
 
     const baseBtn =
       "px-4 py-2 rounded-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition";
 
     return (
       <div className="flex gap-2">
-        {dbUser.role === "ADMIN" ? (
+        {dbUser?.role === "ADMIN" ? (
           <>
             <Link href="/dashboard" className={baseBtn}>
               Dashboard
@@ -47,7 +51,7 @@ export default function NavbarClient() {
               Admin Panel
             </Link>
           </>
-        ) : dbUser.role === "GUARD" ? (
+        ) : dbUser?.role === "GUARD" ? (
           <Link href="/dashboard/guard" className={baseBtn}>
             Guard Dashboard
           </Link>
