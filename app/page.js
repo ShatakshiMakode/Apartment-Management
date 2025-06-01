@@ -97,7 +97,7 @@ export default function HomePage() {
               title: "Complaint Tracking",
               img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748092865/42352cec-7291-4c5b-a420-e16d62eca3b3.png",
               desc: "Log and resolve resident complaints quickly and efficiently with full transparency.",
-              link: "/Complaints",
+              link: "/complaints",
             },
             {
               title: "Facility Booking",

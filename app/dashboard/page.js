@@ -156,6 +156,14 @@ export default function Dashboard() {
             </a>
           </Link>
         )}
+        <Link href="../complaints" passHref legacyBehavior>
+          <a>
+            <Section
+              title="File a Complaint"
+              description="Report issues and concerns within the community."
+            />
+          </a>
+        </Link>
       </div>
     </div>
   );

@@ -6,15 +6,22 @@
 
 generator client {
   provider = "prisma-client-js"
- // output   = "../app/generated/prisma"
+  // output   = "../app/generated/prisma"
 }
 
 datasource db {
-  provider       = "postgresql"
-  url            = env("DATABASE_URL")
-  directUrl      = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
+enum ComplaintType {
+  PLUMBING
+  ELECTRICAL
+  CLEANING
+  SECURITY
+  OTHER
+}
 
 enum Role {
   ADMIN
@@ -26,7 +33,6 @@ enum Role {
   SOCIETY_MEMBER
   VISITOR // ✅ Make sure this value exists!
 }
-
 
 enum ComplaintStatus {
   OPEN
@@ -44,41 +50,39 @@ model User {
   id             String   @id @default(cuid())
   clerkUserId    String   @unique
   name           String? // ✅ Now optional
-  firstName      String?  // ✅ Now optional
-  lastName       String?  // ✅ Now optional
+  firstName      String? // ✅ Now optional
+  lastName       String? // ✅ Now optional
   email          String   @unique
-  phoneNumber    String?  // ✅ Already optional
+  phoneNumber    String? // ✅ Already optional
   role           Role?    @default(VISITOR) // ✅ Optional with default
   profilePicture String?
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  societyId      String?
-  society        Society? @relation(fields: [societyId], references: [id])
+  societyId String?
+  society   Society? @relation(fields: [societyId], references: [id])
 
-  buildingId     String?
-  building       Building? @relation(fields: [buildingId], references: [id])
+  buildingId String?
+  building   Building? @relation(fields: [buildingId], references: [id])
 
   // ✅ Flat relations
-  flatsOwned     Flat[]   @relation("FlatOwner")
-  flatsResiding  Flat[]   @relation("FlatResident")
+  flatsOwned    Flat[] @relation("FlatOwner")
+  flatsResiding Flat[] @relation("FlatResident")
 
   // ✅ Other relations
   complaints     Complaint[]
   bookings       Booking[]
   rsvps          RSVP[]
   polls          Poll[]
-  visitors       Visitor[] @relation("PreApprovedBy")
+  visitors       Visitor[]          @relation("PreApprovedBy")
   events         Event[]
   emergencyCalls EmergencyContact[]
   documents      Document[]
-  notices        Notice[] @relation("UserNotices")
+  notices        Notice[]           @relation("UserNotices")
 
   @@map("users")
 }
-
-
 
 model Society {
   id                 String     @id @default(cuid())
@@ -94,13 +98,13 @@ model Society {
 }
 
 model Building {
-  id             String     @id @default(cuid())
+  id             String   @id @default(cuid())
   name           String
   numberOfFloors Int
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   societyId      String
-  society        Society    @relation(fields: [societyId], references: [id])
+  society        Society  @relation(fields: [societyId], references: [id])
   flats          Flat[]
   users          User[]
 
@@ -108,44 +112,44 @@ model Building {
 }
 
 model Flat {
-  id           String   @id @default(cuid())
-  flatNumber   String
-  areaSqFt     Int
-  bedrooms     Int
-  isOccupied   Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  buildingId   String
-  building     Building @relation(fields: [buildingId], references: [id])
-  ownerId      String?
-  owner        User?    @relation("FlatOwner", fields: [ownerId], references: [id])
-  residentId   String?
-  resident     User?    @relation("FlatResident", fields: [residentId], references: [id])
-  visitors     Visitor[]
+  id         String    @id @default(cuid())
+  flatNumber String
+  areaSqFt   Int
+  bedrooms   Int
+  isOccupied Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  buildingId String
+  building   Building  @relation(fields: [buildingId], references: [id])
+  ownerId    String?
+  owner      User?     @relation("FlatOwner", fields: [ownerId], references: [id])
+  residentId String?
+  resident   User?     @relation("FlatResident", fields: [residentId], references: [id])
+  visitors   Visitor[]
 
   @@map("flats")
 }
 
 model Visitor {
-  id                  String   @id @default(cuid())
-  name                String
-  phoneNumber         String
-  vehicleNumber       String?
-  purpose             String
-  checkInTime         DateTime?
-  checkOutTime        DateTime?
-  status              String
-  gatePassId          String?
-  securityCheckNotes  String?
-  imageUrl            String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                 String    @id @default(cuid())
+  name               String
+  phoneNumber        String
+  vehicleNumber      String?
+  purpose            String
+  checkInTime        DateTime?
+  checkOutTime       DateTime?
+  status             String
+  gatePassId         String?
+  securityCheckNotes String?
+  imageUrl           String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  visitingFlatId      String
-  visitingFlat        Flat     @relation(fields: [visitingFlatId], references: [id])
+  visitingFlatId String
+  visitingFlat   Flat   @relation(fields: [visitingFlatId], references: [id])
 
   preApprovedByUserId String
-  preApprovedBy       User     @relation("PreApprovedBy", fields: [preApprovedByUserId], references: [id])
+  preApprovedBy       User   @relation("PreApprovedBy", fields: [preApprovedByUserId], references: [id])
 
   @@map("visitors")
 }
@@ -154,6 +158,7 @@ model Complaint {
   id          String          @id @default(cuid())
   title       String
   description String
+  type        ComplaintType   @default(OTHER)
   status      ComplaintStatus @default(OPEN)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -164,12 +169,12 @@ model Complaint {
 }
 
 model Facility {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   location  String
   capacity  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   bookings  Booking[]
 
   @@map("facilities")
@@ -191,23 +196,23 @@ model Booking {
 }
 
 model Notice {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  postedAt  DateTime @default(now())
-  postedBy  String
-  user      User     @relation("UserNotices", fields: [postedBy], references: [id])
+  id       String   @id @default(cuid())
+  title    String
+  content  String
+  postedAt DateTime @default(now())
+  postedBy String
+  user     User     @relation("UserNotices", fields: [postedBy], references: [id])
 
   @@map("notices")
 }
 
 model EmergencyContact {
-  id          String   @id @default(cuid())
+  id          String @id @default(cuid())
   name        String
   number      String
   description String
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User   @relation(fields: [userId], references: [id])
 
   @@map("emergency_contacts")
 }
@@ -236,11 +241,11 @@ model Vendor {
 }
 
 model Document {
-  id        String   @id @default(cuid())
-  title     String
-  fileUrl   String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  id         String   @id @default(cuid())
+  title      String
+  fileUrl    String
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
   uploadedAt DateTime @default(now())
 
   @@map("documents")
@@ -266,8 +271,8 @@ model RSVP {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
-  user      User       @relation(fields: [userId], references: [id])
-  event     Event      @relation(fields: [eventId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
 
   @@map("rsvps")
 }
