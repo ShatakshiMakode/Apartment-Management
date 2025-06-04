@@ -46,6 +46,12 @@ enum RSVPStatus {
   MAYBE
 }
 
+enum VisitorStatus {
+  PENDING
+  CHECKED_IN
+  CHECKED_OUT
+}
+
 model User {
   id             String   @id @default(cuid())
   clerkUserId    String   @unique
@@ -138,12 +144,13 @@ model Visitor {
   purpose            String
   checkInTime        DateTime?
   checkOutTime       DateTime?
-  status             String
+  status             VisitorStatus @default(PENDING)
   gatePassId         String?
   securityCheckNotes String?
   imageUrl           String?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
+  qrCodeToken        String?   @unique 
 
   visitingFlatId String
   visitingFlat   Flat   @relation(fields: [visitingFlatId], references: [id])

@@ -91,7 +91,7 @@ export default function HomePage() {
               title: "Visitor Management",
               img: "https://res.cloudinary.com/dayrre5om/image/upload/v1748017704/WhatsApp_Image_2025-05-23_at_21.45.24_159de20f_uei3wx.jpg",
               desc: "Secure your premises by verifying every visitor directly with residents seamlessly.",
-              link: "/visitors",
+              link: "/visitor",
             },
             {
               title: "Complaint Tracking",
