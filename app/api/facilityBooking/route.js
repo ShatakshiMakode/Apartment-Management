@@ -17,30 +17,26 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { facility, date, timeSlot } = body;
+    const { facility, startDateTime, endDateTime, reason } = body;
 
-    if (!facility || !date || !timeSlot) {
+    if (!facility || !startDateTime || !endDateTime) {
       return NextResponse.json(
         { error: "Missing booking fields" },
         { status: 400 }
       );
     }
-
-    const timeRanges = {
-      Morning: ["08:00", "12:00"],
-      Afternoon: ["12:00", "16:00"],
-      Evening: ["16:00", "20:00"],
-      Night: ["20:00", "23:00"],
-    };
-
-    const [start, end] = timeRanges[timeSlot] || [];
-
-    if (!start || !end) {
+    if (!startDateTime || !endDateTime) {
       return NextResponse.json({ error: "Invalid time slot" }, { status: 400 });
     }
+    const startTime = new Date(startDateTime);
+    const endTime = new Date(endDateTime);
 
-    const startTime = new Date(`${date}T${start}:00`);
-    const endTime = new Date(`${date}T${end}:00`);
+    if (startTime >= endTime) {
+      return NextResponse.json(
+        { error: "Start time must be before end time" },
+        { status: 400 }
+      );
+    }
 
     const existingBooking = await db.booking.findFirst({
       where: {
@@ -59,12 +55,13 @@ export async function POST(req) {
 
     const newBooking = await db.booking.create({
       data: {
+        facility,
         userId: user.id,
-        facility, // 🛠️ enum string like 'GYM'
         startTime,
         endTime,
+        reason,
         status: "BOOKED",
-      },
+      }
     });
 
     return NextResponse.json(
