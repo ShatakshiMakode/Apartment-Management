@@ -198,6 +198,7 @@ model Booking {
   user       User     @relation(fields: [userId], references: [id])
   startTime  DateTime
   endTime    DateTime
+  reason     String?   // optional reason column
   status     BookingStatus @default(BOOKED)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

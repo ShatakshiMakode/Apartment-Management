@@ -18,19 +18,24 @@ import {
 
 export default function FacilityBookingPage() {
   const { user } = useUser();
-  const [form, setForm] = useState({
-    facility: "",
-    date: "",
-    timeSlot: "",
-  });
-
+const [form, setForm] = useState({
+  facility: "",
+  startDateTime: "",
+  endDateTime: "",
+  reason: "",
+});
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await fetch("/api/facilityBooking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+     body: JSON.stringify({
+  facility: form.facility,
+  startDateTime: form.startDateTime,
+  endDateTime: form.endDateTime,
+  reason: form.reason,
+}),
       });
 
       const data = await res.json();
@@ -94,7 +99,7 @@ export default function FacilityBookingPage() {
         duration: 4000,
       });
 
-      setForm({ facility: "", date: "", timeSlot: "" });
+      setForm({ facility: "", startDateTime: "", endDateTime: "", reason: "" });0
     } catch (err) {
       console.error("Client Error:", err);
       toast.error("⚠️ Network error. Please try again later.", {
@@ -139,40 +144,44 @@ export default function FacilityBookingPage() {
               </Select>
             </div>
 
-            {/* Date */}
-            <div>
-              <Label htmlFor="date">Date</Label>
-              <Input
-                type="date"
-                id="date"
-                value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
-                required
-                className="bg-blue-300 border-blue-700"
-              />
-            </div>
+            {/* Start */}
+<div>
+  <Label htmlFor="start">Start&nbsp;Date&nbsp;&amp;&nbsp;Time</Label>
+  <Input
+    type="datetime-local"
+    id="start"
+    value={form.startDateTime}
+    onChange={(e) =>
+      setForm({ ...form, startDateTime: e.target.value })}
+    required
+    className="bg-blue-300 border-blue-700"
+  />
+</div>
 
-            {/* Time Slot */}
-            <div>
-              <Label htmlFor="timeSlot">Time Slot</Label>
-              <Select
-                onValueChange={(value) => setForm({ ...form, timeSlot: value })}
-              >
-                <SelectTrigger className="bg-blue-300 border-blue-700">
-                  <SelectValue placeholder="Select Time Slot" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Morning">
-                    Morning (8 AM - 12 PM)
-                  </SelectItem>
-                  <SelectItem value="Afternoon">
-                    Afternoon (12 PM - 4 PM)
-                  </SelectItem>
-                  <SelectItem value="Evening">Evening (4 PM - 8 PM)</SelectItem>
-                  <SelectItem value="Night">Night (8 PM - 11 PM)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+{/* End */}
+<div>
+  <Label htmlFor="end">End&nbsp;Date&nbsp;&amp;&nbsp;Time</Label>
+  <Input
+    type="datetime-local"
+    id="end"
+    value={form.endDateTime}
+    onChange={(e) =>
+      setForm({ ...form, endDateTime: e.target.value })}
+    required
+    className="bg-blue-300 border-blue-700"
+  />
+</div>
+<div>
+  <Label htmlFor="reason">Reason / Extra info</Label>
+  <textarea
+    id="reason"
+    rows={3}
+    placeholder="Why are you booking? (optional)"
+    value={form.reason}
+    onChange={(e) => setForm({ ...form, reason: e.target.value })}
+    className="w-full bg-blue-300 border-blue-700 rounded-md p-2"
+  />
+</div>
 
             <Button
               type="submit"
