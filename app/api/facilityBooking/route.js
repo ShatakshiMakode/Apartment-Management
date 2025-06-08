@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    console.log("🔁 Booking API called");
 
     const { userId: clerkUserId } = await auth();
 
@@ -59,7 +58,7 @@ export async function POST(req) {
         userId: user.id,
         startTime,
         endTime,
-        reason,
+        reason: reason || "No reason provided",
         status: "BOOKED",
       }
     });
@@ -69,7 +68,6 @@ export async function POST(req) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("🔥 Booking Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

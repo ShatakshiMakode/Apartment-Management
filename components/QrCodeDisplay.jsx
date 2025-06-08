@@ -2,19 +2,39 @@
 
 import { QRCodeCanvas } from "qrcode.react";
 import { useRef } from "react";
+import { toast } from "react-hot-toast";
 
-export default function QrCodeDisplay({ qrCodeUrl }) {
+export default function QrCodeDisplay({
+  qrCodeUrl,
+  task = "visitor",
+  name = "user",
+}) {
   const qrRef = useRef(null);
 
   const downloadQRCode = () => {
-    const canvas = qrRef.current.querySelector("canvas");
-    const pngUrl = canvas
-      .toDataURL("image/png")
-      .replace("image/png", "image/octet-stream");
-    const downloadLink = document.createElement("a");
-    downloadLink.href = pngUrl;
-    downloadLink.download = "visitor-qr-code.png";
-    downloadLink.click();
+    try {
+      const canvas = qrRef.current?.querySelector("canvas");
+
+      if (!canvas) {
+        toast.error("QR code not found!");
+        return;
+      }
+
+      const pngUrl = canvas
+        .toDataURL("image/png")
+        .replace("image/png", "image/octet-stream");
+
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pngUrl;
+      const today = new Date().toLocaleDateString("en-GB").split("/").join("-");
+      downloadLink.download = `${task}-${name}-qr-code-${today}.png`;
+      downloadLink.click();
+
+      toast.success("QR code downloaded!");
+    } catch (error) {
+      toast.error("Something went wrong while downloading.");
+      console.error("QR Download Error:", error);
+    }
   };
 
   if (!qrCodeUrl) return null;

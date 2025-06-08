@@ -181,9 +181,11 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { checkUserFromRequest } from "@/lib/checkUser";
 
 // GET - Get current user details
-export async function GET() {
+export async function GET(req) {
+  
   try {
     const { userId } = await auth();
 
@@ -191,13 +193,11 @@ export async function GET() {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-
-    if (!user) {
+    const user = await checkUserFromRequest(req);
+    if(!user) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
     }
+    
 
     return NextResponse.json({ success: true, data: user });
   } catch (error) {

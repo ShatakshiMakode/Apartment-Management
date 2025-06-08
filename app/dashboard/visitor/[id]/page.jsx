@@ -20,7 +20,7 @@ export default async function VisitorPage({ params }) {
   return (
     <div className="p-6 text-center">
       <h1 className="text-2xl font-bold mb-4">Visitor QR Code</h1>
-      <QRCodeDisplay qrCodeUrl={visitorUrl} />
+      <QRCodeDisplay qrCodeUrl={visitorUrl} task="visitor" name={visitor.name} />
       <p className="mt-4 text-gray-600">
         Visitor Name: <strong>{visitor.name}</strong>
       </p>

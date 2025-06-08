@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  // output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -15,92 +8,34 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum ComplaintType {
-  PLUMBING
-  ELECTRICAL
-  CLEANING
-  SECURITY
-  OTHER
-}
-
-enum Role {
-  ADMIN
-  SOCIETY_SECRETARY
-  STAFF
-  TECHNICIAN
-  WATCHMAN
-  HOUSE_OWNER
-  SOCIETY_MEMBER
-  VISITOR // ✅ Make sure this value exists!
-}
-
-enum ComplaintStatus {
-  OPEN
-  IN_PROGRESS
-  CLOSED
-}
-
-enum RSVPStatus {
-  GOING
-  NOT_GOING
-  MAYBE
-}
-
-enum VisitorStatus {
-  PENDING
-  CHECKED_IN
-  CHECKED_OUT
-}
-
-enum BookingStatus {
-  BOOKED
-  CANCELLED
-  COMPLETED
-}
-
-enum FacilityType {
-  GYM
-  SWIMMING_POOL
-  CLUBHOUSE
-  BANQUET_HALL
-}
-
-
-
 model User {
-  id             String   @id @default(cuid())
-  clerkUserId    String   @unique
-  name           String? // ✅ Now optional
-  firstName      String? // ✅ Now optional
-  lastName       String? // ✅ Now optional
-  email          String   @unique
-  phoneNumber    String? // ✅ Already optional
-  role           Role?    @default(VISITOR) // ✅ Optional with default
-  profilePicture String?
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  societyId String?
-  society   Society? @relation(fields: [societyId], references: [id])
-
-  buildingId String?
-  building   Building? @relation(fields: [buildingId], references: [id])
-
-  // ✅ Flat relations
-  flatsOwned    Flat[] @relation("FlatOwner")
-  flatsResiding Flat[] @relation("FlatResident")
-
-  // ✅ Other relations
-  complaints     Complaint[]
-  bookings       Booking[]
-  rsvps          RSVP[]
-  polls          Poll[]
-  visitors       Visitor[]          @relation("PreApprovedBy")
-  events         Event[]
-  emergencyCalls EmergencyContact[]
-  documents      Document[]
-  notices        Notice[]           @relation("UserNotices")
+  id               String             @id @default(cuid())
+  clerkUserId      String             @unique
+  firstName        String?
+  lastName         String?
+  email            String             @unique
+  phoneNumber      String?
+  role             Role?              @default(VISITOR)
+  profilePicture   String?
+  isActive         Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  societyId        String?
+  buildingId       String?
+  name             String?
+  EmergencyContact EmergencyContact[]
+  bookings         Booking[]
+  complaints       Complaint[]
+  documents        Document[]
+  events           Event[]
+  flatsOwned       Flat[]             @relation("FlatOwner")
+  flatsResiding    Flat[]             @relation("FlatResident")
+  notices          Notice[]           @relation("UserNotices")
+  polls            Poll[]
+  rsvps            RSVP[]
+  building         Building?          @relation(fields: [buildingId], references: [id])
+  society          Society?           @relation(fields: [societyId], references: [id])
+  visitors         Visitor[]          @relation("PreApprovedBy")
 
   @@map("users")
 }
@@ -141,10 +76,10 @@ model Flat {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   buildingId String
-  building   Building  @relation(fields: [buildingId], references: [id])
   ownerId    String?
-  owner      User?     @relation("FlatOwner", fields: [ownerId], references: [id])
   residentId String?
+  building   Building  @relation(fields: [buildingId], references: [id])
+  owner      User?     @relation("FlatOwner", fields: [ownerId], references: [id])
   resident   User?     @relation("FlatResident", fields: [residentId], references: [id])
   visitors   Visitor[]
 
@@ -152,26 +87,24 @@ model Flat {
 }
 
 model Visitor {
-  id                 String    @id @default(cuid())
-  name               String
-  phoneNumber        String
-  vehicleNumber      String?
-  purpose            String
-  checkInTime        DateTime?
-  checkOutTime       DateTime?
-  status             VisitorStatus @default(PENDING)
-  gatePassId         String?
-  securityCheckNotes String?
-  imageUrl           String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  qrCodeToken        String?   @unique 
-
-  visitingFlatId String
-  visitingFlat   Flat   @relation(fields: [visitingFlatId], references: [id])
-
+  id                  String        @id @default(cuid())
+  name                String
+  phoneNumber         String
+  vehicleNumber       String?
+  purpose             String
+  checkInTime         DateTime?
+  checkOutTime        DateTime?
+  gatePassId          String?
+  securityCheckNotes  String?
+  imageUrl            String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  visitingFlatId      String
   preApprovedByUserId String
-  preApprovedBy       User   @relation("PreApprovedBy", fields: [preApprovedByUserId], references: [id])
+  qrCodeToken         String?       @unique
+  status              VisitorStatus @default(PENDING)
+  preApprovedBy       User          @relation("PreApprovedBy", fields: [preApprovedByUserId], references: [id])
+  visitingFlat        Flat          @relation(fields: [visitingFlatId], references: [id])
 
   @@map("visitors")
 }
@@ -180,28 +113,27 @@ model Complaint {
   id          String          @id @default(cuid())
   title       String
   description String
-  type        ComplaintType   @default(OTHER)
   status      ComplaintStatus @default(OPEN)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   userId      String
+  type        ComplaintType   @default(OTHER)
   user        User            @relation(fields: [userId], references: [id])
 
   @@map("complaints")
 }
 
-
 model Booking {
-  id         String   @id @default(cuid())
-  facility   FacilityType
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  startTime  DateTime
-  endTime    DateTime
-  reason     String?   // optional reason column
-  status     BookingStatus @default(BOOKED)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String        @id @default(cuid())
+  userId    String
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  status    BookingStatus @default(BOOKED)
+  facility  FacilityType
+  reason    String?
+  user      User          @relation(fields: [userId], references: [id])
 
   @@map("bookings")
 }
@@ -215,17 +147,6 @@ model Notice {
   user     User     @relation("UserNotices", fields: [postedBy], references: [id])
 
   @@map("notices")
-}
-
-model EmergencyContact {
-  id          String @id @default(cuid())
-  name        String
-  number      String
-  description String
-  userId      String
-  user        User   @relation(fields: [userId], references: [id])
-
-  @@map("emergency_contacts")
 }
 
 model Expense {
@@ -245,10 +166,25 @@ model Vendor {
   service   String
   contact   String
   email     String
+  imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  vendorLogs VendorLog[]
 
   @@map("vendors")
+}
+
+model VendorLog {
+  id         String   @id @default(cuid())
+  vendorId   String
+  vendor     Vendor   @relation(fields: [vendorId], references: [id])
+  date       DateTime @default(now())
+  entryTime  DateTime?
+  exitTime   DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("vendor_logs")
 }
 
 model Document {
@@ -256,8 +192,8 @@ model Document {
   title      String
   fileUrl    String
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
   uploadedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
 
   @@map("documents")
 }
@@ -267,9 +203,9 @@ model Poll {
   question  String
   options   String[]
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
 
   @@map("polls")
 }
@@ -281,9 +217,8 @@ model RSVP {
   response  RSVPStatus
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-
-  user  User  @relation(fields: [userId], references: [id])
-  event Event @relation(fields: [eventId], references: [id])
+  event     Event      @relation(fields: [eventId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
 
   @@map("rsvps")
 }
@@ -300,4 +235,67 @@ model Event {
   rsvps       RSVP[]
 
   @@map("events")
+}
+
+model EmergencyContact {
+  userId      String
+  id          String   @id
+  name        String
+  phoneNumber String
+  type        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  email       String
+  role        String
+  users       User     @relation(fields: [userId], references: [id])
+}
+
+enum ComplaintType {
+  PLUMBING
+  ELECTRICAL
+  CLEANING
+  SECURITY
+  OTHER
+}
+
+enum Role {
+  ADMIN
+  SOCIETY_SECRETARY
+  STAFF
+  TECHNICIAN
+  WATCHMAN
+  HOUSE_OWNER
+  SOCIETY_MEMBER
+  VISITOR
+}
+
+enum ComplaintStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+enum RSVPStatus {
+  GOING
+  NOT_GOING
+  MAYBE
+}
+
+enum VisitorStatus {
+  PENDING
+  CHECKED_IN
+  CHECKED_OUT
+}
+
+enum BookingStatus {
+  BOOKED
+  CANCELLED
+  COMPLETED
+}
+
+enum FacilityType {
+  GYM
+  SWIMMING_POOL
+  CLUBHOUSE
+  BANQUET_HALL
 }
