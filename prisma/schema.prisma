@@ -36,21 +36,38 @@ model User {
   building         Building?          @relation(fields: [buildingId], references: [id])
   society          Society?           @relation(fields: [societyId], references: [id])
   visitors         Visitor[]          @relation("PreApprovedBy")
+  societyAdmins    SocietyAdmin[]
 
   @@map("users")
 }
 
 model Society {
-  id                 String     @id @default(cuid())
+  id                 String         @id @default(cuid())
   name               String
   address            String
   registrationNumber String
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
   buildings          Building[]
   users              User[]
+  societyAdmins      SocietyAdmin[]
 
   @@map("societies")
+}
+
+model SocietyAdmin {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  societyId   String
+  societyName String
+  totalFlats  Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  society Society @relation(fields: [societyId], references: [id])
+
+  @@map("society_admins")
 }
 
 model Building {
@@ -161,28 +178,28 @@ model Expense {
 }
 
 model Vendor {
-  id        String   @id @default(cuid())
-  name      String
-  service   String
-  contact   String
-  email     String
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(cuid())
+  name       String
+  service    String
+  contact    String
+  email      String
+  imageUrl   String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   vendorLogs VendorLog[]
 
   @@map("vendors")
 }
 
 model VendorLog {
-  id         String   @id @default(cuid())
-  vendorId   String
-  vendor     Vendor   @relation(fields: [vendorId], references: [id])
-  date       DateTime @default(now())
-  entryTime  DateTime?
-  exitTime   DateTime?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String    @id @default(cuid())
+  vendorId  String
+  vendor    Vendor    @relation(fields: [vendorId], references: [id])
+  date      DateTime  @default(now())
+  entryTime DateTime?
+  exitTime  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("vendor_logs")
 }
@@ -248,6 +265,24 @@ model EmergencyContact {
   email       String
   role        String
   users       User     @relation(fields: [userId], references: [id])
+
+  @@map("emergency_contacts")
+}
+
+model PendingAdmin {
+  id                 String             @id @default(cuid())
+  name               String
+  email              String             @unique
+  phoneNumber        String
+  apartmentName      String
+  totalFlats         Int
+  address            String             
+  registrationNumber String
+  status             AdminRequestStatus @default(PENDING)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@map("pending_admins")
 }
 
 enum ComplaintType {
@@ -259,7 +294,8 @@ enum ComplaintType {
 }
 
 enum Role {
-  ADMIN
+  SUPER_ADMIN
+  SOCIETY_ADMIN
   SOCIETY_SECRETARY
   STAFF
   TECHNICIAN
@@ -298,4 +334,10 @@ enum FacilityType {
   SWIMMING_POOL
   CLUBHOUSE
   BANQUET_HALL
+}
+
+enum AdminRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
